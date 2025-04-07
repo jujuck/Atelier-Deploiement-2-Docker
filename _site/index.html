@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+<title>Atelier-Deploiement-1-Nginx | Wild code school</title>
+<link rel="stylesheet" href="/assets/css/style.css?v=2281d2ef32b8abb20029d5e72d878b373820bb3e">
+<link rel="stylesheet" href="/assets/css/syntax_monokai.css?v=2281d2ef32b8abb20029d5e72d878b373820bb3e">
+
+
+<link rel="icon" href="/assets/images/fav-icon-dev.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/css/theme-dev.css?v=2281d2ef32b8abb20029d5e72d878b373820bb3e">
+
+<style>
+    :root {
+        --bootstrap-icons-font: 'bootstrap-icons';
+    }
+
+    @font-face {
+        font-display: block;
+        font-family: 'bootstrap-icons';
+        src: url("/assets/fonts/bootstrap-icons.woff2") format("woff2"),
+        url("/assets/fonts/bootstrap-icons.woff") format("woff");
+    }
+    @font-face {
+        font-family: 'proxima';
+        src: url("/assets/fonts/proxima-nova/proximanova-bold-webfont.woff2") format('woff2'),
+            url("/assets/fonts/proxima-nova/proximanova-bold-webfont.woff") format('woff');
+        font-weight: bold;
+        font-style: normal;
+
+    }
+
+    @font-face {
+        font-family: 'proxima';
+        src: url("/assets/fonts/proxima-nova/proximanova-boldit-webfont.woff2") format('woff2'),
+            url("/assets/fonts/proxima-nova/proximanova-boldit-webfont.woff") format('woff');
+        font-weight: bold;
+        font-style: italic;
+
+    }
+
+    @font-face {
+        font-family: 'proxima';
+        src: url("/assets/fonts/proxima-nova/proximanova-regular-webfont.woff2") format('woff2'),
+            url("/assets/fonts/proxima-nova/proximanova-regular-webfont.woff") format('woff');
+        font-weight: normal;
+        font-style: normal;
+
+    }
+
+    @font-face {
+        font-family: 'proxima';
+        src: url("/assets/fonts/proxima-nova/proximanova-semiboldit-webfont.woff2") format('woff2'),
+            url("/assets/fonts/proxima-nova/proximanova-semiboldit-webfont.woff") format('woff');
+        font-weight: normal;
+        font-style: italic;
+    }
+
+    @font-face {
+        font-family: 'proxima';
+        src: url("/assets/fonts/proxima-nova/proximanova-semibold-webfont.woff2") format('woff2'),
+            url("/assets/fonts/proxima-nova/proximanova-semibold-webfont.woff") format('woff');
+        font-weight: 600;
+        font-style: normal;
+    }
+    
+    @font-face {
+        font-family: 'filsonpro';
+        src: url("/assets/fonts/filson-pro/FilsonPro-Medium.woff2") format('woff2'),
+            url("/assets/fonts/filson-pro/FilsonPro-Medium.woff") format('woff');
+        font-weight: 500;
+        font-style: normal;
+    }
+</style>
+<script src="/assets/js/main.js?v=2281d2ef32b8abb20029d5e72d878b373820bb3e" type="module"></script>
+
+
+
+
+
+<script type="module" src="/assets/js/modules/toc.js?v=2281d2ef32b8abb20029d5e72d878b373820bb3e"></script>
+
+    <script src="/assets/js/modules/wrappDefault.js?v=2281d2ef32b8abb20029d5e72d878b373820bb3e" type="module"></script>
+</head>
+<body class="has-toc">
+    <header>
+    <div>
+        <h1>Atelier-Deploiement-1-Nginx</h1>
+
+        
+        
+    </div>
+    <div class="banner">
+        <svg class="logo" alt="" data-name="Calque 1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 370.02 270.2">
+            <defs><style>.cls-1{fill:none;}.cls-2{clip-path:url(#clip-path);}.cls-3{fill:#333;}</style><clipPath id="clip-path" transform="translate(0.01 0.1)"><rect class="cls-1" width="370" height="270"/></clipPath></defs><title>icone_wild_code_school</title><g class="cls-2"><path class="cls-3" d="M170.06,159.84V89.9a10,10,0,0,0-20,0v69.58c0,22.39-18,40.6-40,40.6s-40-18.21-40-40.6V59.9a10,10,0,0,0-20,0v99.94a60,60,0,1,0,120,0" transform="translate(0.01 0.1)"/><path class="cls-3" d="M164.37,49.9a10.18,10.18,0,0,0,9.26-6.11,40,40,0,0,1,36.43-23.86c22.06,0,40,18.22,40,40.6V159.9a10,10,0,0,0,20,0V60a60,60,0,0,0-115-24.05,10.06,10.06,0,0,0,9.3,14" transform="translate(0.01 0.1)"/><path class="cls-3" d="M210.06,49.9h0a10,10,0,0,0-10,10v99.94a60,60,0,1,0,120,0V149.9a10,10,0,0,0-20,0v9.58c0,22.39-17.95,40.6-40,40.6s-40-18.21-40-40.6V59.9a10,10,0,0,0-10-10" transform="translate(0.01 0.1)"/><path class="cls-3" d="M10,89.91a10,10,0,0,0,10-10V60.55c0-22.39,18-40.61,40-40.61s40,18.22,40,40.61V159.9a10,10,0,0,0,20,0V60A60,60,0,1,0,0,60V79.91a10,10,0,0,0,10,10" transform="translate(0.01 0.1)"/><path class="cls-3" d="M20,165.19V129.9a10,10,0,0,0-10.67-10A10.24,10.24,0,0,0,0,130.25v33.6a106.6,106.6,0,0,0,29,72.87,9.74,9.74,0,0,0,14.23-13.3A84.53,84.53,0,0,1,20,165.19" transform="translate(0.01 0.1)"/><path class="cls-3" d="M360.26,10.68A34.86,34.86,0,0,0,338.09,0l-.38,0c-.42,0-.85-.06-1.28-.07l-.79,0L335-.1h-.26c-.14,0-.28,0-.42,0a34.36,34.36,0,0,0-4.09.32l-.17,0h0A35,35,0,0,0,300,34.9v65a10,10,0,0,0,10.67,10A10.23,10.23,0,0,0,320,99.55V35.33a15.29,15.29,0,0,1,14.25-15.41,14.93,14.93,0,0,1,9.59,2.88c.28.21.55.42.81.65l.45.38c.17.15.33.31.48.47s.37.37.54.56l.49.57.46.59c.11.15.22.29.32.44s.38.59.56.9l.22.38c.19.35.37.7.53,1.06,0,.1.08.2.13.3.15.36.29.72.41,1.1l.06.15c.13.42.24.85.34,1.28l.06.28c.08.43.15.87.2,1.32l0,.25c0,.47.07.94.07,1.42V165a85,85,0,0,1-1,13.25,10,10,0,0,0,9.85,11.66h0a10,10,0,0,0,9.88-8.45A105,105,0,0,0,370,165.1V34.9a34.85,34.85,0,0,0-9.75-24.22" transform="translate(0.01 0.1)"/><path class="cls-3" d="M339.61,213.9h-.29a9.88,9.88,0,0,0-7.74,3.81c-.5.62-1,1.23-1.51,1.84q-1.53,1.81-3.16,3.55l0,0a86.86,86.86,0,0,1-7.6,7.14l-.16.14c-.46.38-.93.75-1.4,1.12l-.31.25-1.33,1-.41.31-1.29.94-.49.35-1.27.88-.53.36-1.27.83-.58.36-1.26.79-.6.36-1.28.75-.62.35-1.29.71-.62.33-1.33.69-.6.29c-.46.23-.91.46-1.37.67l-.5.23q-2.49,1.16-5,2.16l-.46.18-1.24.46-.87.31c-.38.14-.77.26-1.15.39l-1,.33-1.12.35-1,.31-1.1.31-1.09.3-1.09.28-1.11.27-1.09.25-1.15.24-1.07.22-1.18.22-1.07.18-1.21.19-1.06.15-1.26.16-1,.13-1.31.13-1,.09-1.38.1-.94.06-1.55.07-.8,0c-.78,0-1.57,0-2.36,0a85,85,0,0,1-68-34.07l-.05.09h0l-.06-.09a14.78,14.78,0,0,0-23.68,0l0,.06A85,85,0,0,1,80.7,246.55,9.94,9.94,0,0,0,75,265.6a102.14,102.14,0,0,0,30.22,4.5,104.36,104.36,0,0,0,44.57-10,105.41,105.41,0,0,0,35.2-27,105,105,0,0,0,142,16.72,10.05,10.05,0,0,0,1.48-1.33l0,0c1.1-.84,2.18-1.69,3.24-2.57l.19-.16c1-.79,1.9-1.61,2.83-2.44l.52-.46q1.17-1.07,2.31-2.16c.3-.3.61-.58.92-.88.64-.63,1.26-1.28,1.89-1.93.34-.35.69-.69,1-1.05l.08-.1c2-2.14,3.94-4.37,5.76-6.68a9.92,9.92,0,0,0-7.73-16.13" transform="translate(0.01 0.1)"/></g>
+        </svg>
+        <span class="title">Atelier-Deploiement-1-Nginx</span>
+        <span class="type">
+            
+            Workshop
+            &nbsp;|&nbsp;
+            <a href="https://github.com/jujuck/Atelier-Deploiement-1-Nginx/issues/new" target="_blank">
+                Feedback <i class="bi bi-box-arrow-up-right"></i>
+            </a>
+        </span>
+    </div>
+</header>
+
+<nav id="toc-nav"></nav>
+
+    <main id="main">
+        
+
+
+
+  
+        <h1 id="atelier-déploiement-nginx-avec-node-js">Atelier Déploiement Nginx avec Node JS</h1>
+
+<h2 id="1-objectifs">1. Objectifs</h2>
+
+<p>Apprendre à déployer un site sous NodeJS avec Nginx</p>
+
+<ul>
+  <li>Nginx et son reverse proxy</li>
+  <li>Git</li>
+  <li>NodeJS (React et Express)</li>
+  <li>PM2</li>
+  <li>SSL et let’s encrypt</li>
+</ul>
+
+<h2 id="2-pré-requis">2. Pré requis</h2>
+
+<ul>
+  <li>Connaissance minimal en terminal Bash (Se déplacer dans les dossiers, afficher son arborescence, créer un fichier, éditer un fichier, …)</li>
+  <li>Connexion en ssh au serveur</li>
+  <li>Connaitre git, React et express</li>
+</ul>
+
+<h2 id="3-explication-et-context">3. Explication et context</h2>
+
+<h3 id="31-le-serveur-machine-physique-est-souvent-dédié-à-un-service-">3.1 Le serveur (machine physique) est souvent dédié à un service :</h3>
+
+<ul>
+  <li>Il peut recevoir et traité plusieurs requêtes en même temps.</li>
+  <li>Il est spécialisé dans certaines tâches précises (stockage, calcul, hébergement).</li>
+  <li>Il fonctionne en continu, 24h/24, 7j/7.</li>
+  <li>Il est rarement manipulé directement et fonctionne souvent sans interface graphique (Connexion SSH).</li>
+  <li>Sa puissance est optimisée pour gérer de multiples requêtes en même temps.</li>
+</ul>
+
+<h3 id="32-le-serveur-web-logiciel">3.2 Le serveur web (Logiciel)</h3>
+
+<p>Pour fonctionner sur le web, un serveur a besoin d’un Serveur Web (Logiciel). Ce logiciel permet d’écouter les ports, par défaut pour le web :</p>
+
+<ul>
+  <li>Port 80 pour HTTP (Non sécurisé)</li>
+  <li>Port 443 pour HTTPS (Sécurisé).
+Si une demande (requête) arrive sur un port, le serveur web va prendre en charge la demande et y répondre en fonction des instructions que le développeur lui aura donné</li>
+</ul>
+
+<p>Les 2 serveurs web les plus courants sont Nginx et Apache. Leurs grands missions sont donc :</p>
+
+<ul>
+  <li>Distribuer des pages web : Il reçoit les requêtes HTTP/HTTPS des navigateurs et renvoie les fichiers HTML, CSS, JavaScript et médias demandés.</li>
+  <li>Équilibrage de charge (Load Balancing) : Il peut répartir le trafic entre plusieurs serveurs d’application pour optimiser les performances et assurer une haute disponibilité.</li>
+  <li>Reverse Proxy : Il agit comme intermédiaire entre les clients et vos serveurs d’applications (comme Node.js, PHP, Ruby), redirigeant les requêtes vers le bon service en arrière-plan.</li>
+  <li>Mise en cache : Il stocke temporairement des copies des ressources fréquemment demandées pour accélérer les temps de réponse.</li>
+  <li>Sécurité : Il filtre les requêtes malveillantes, limite les taux de connexion (rate limiting), et gère les certificats SSL/TLS pour les connexions sécurisées.</li>
+  <li>Compression : Il peut compresser les données avant de les envoyer pour réduire la bande passante utilisée.</li>
+  <li>Servir du contenu statique : Il est particulièrement efficace pour délivrer rapidement des fichiers qui ne changent pas (images, CSS, etc.).</li>
+</ul>
+
+<p>Tu vas donc ajouter Nginx à ton serveur. Nginx est apprécié pour sa légèreté, sa rapidité et sa capacité à gérer un grand nombre de connexions simultanées, ce qui en fait un choix populaire pour les sites à fort trafic.</p>
+
+<h2 id="4-installation-des-outils">4. Installation des outils</h2>
+
+<p>Sur linux, avant toute installation, tu vas prendre le réflexe de mettre à jour le dictionnaire <code class="language-plaintext highlighter-rouge">apt</code>. C’est un peu la liste des packages possibles pour Linux/Ubuntu avec leur version.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt update
+</code></pre></div></div>
+
+<p>Puis tu vas mettre à jour les paquets à partir de ce nouveau dictionnaire.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt upgrade
+</code></pre></div></div>
+
+<h3 id="41-git">4.1 Git</h3>
+
+<p>Le premier utilitaire dont tu vas avoir besoin est bien connu : <strong>GIT</strong>. Il va te permettre, un peu plus tard dans l’atelier de récupérer ton code sur ton repo GitHub ou celui de la Wild.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt <span class="nb">install </span>git
+</code></pre></div></div>
+
+<p>Puis vérifies que la CLI Git est correctement installée.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git <span class="nt">--version</span>
+</code></pre></div></div>
+
+<p class="alert-warning">Git vient d’être installé en mode <code class="language-plaintext highlighter-rouge">sudo</code>(SuperAdim). Ton SuperAdmin est donc le propriétaire exclusif de <code class="language-plaintext highlighter-rouge">git</code> ou autrement dit, ton <code class="language-plaintext highlighter-rouge">user</code>ne peut faire exécuter <code class="language-plaintext highlighter-rouge">git</code>.
+Pour y remédier, tu peux éxécuter les commandes : <code class="language-plaintext highlighter-rouge">sudo chown &lt;ton_user&gt;:&lt;ton_user&gt; /usr/bin/git</code>,
+puis vérifier avec <code class="language-plaintext highlighter-rouge">ls -l /usr/bin/git</code></p>
+
+<h3 id="42-node">4.2 Node</h3>
+
+<p>Le deuxième utilitaire à installer est ton runtime: <strong>NodeJS</strong> et son meilleur ami, le gestionnaire de package.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt <span class="nb">install </span>nodejs npm
+</code></pre></div></div>
+
+<p class="alert-warning">Pour optimiser les ressources serveurs et éviter les doublons de packages npm, tu pourrais également installer <code class="language-plaintext highlighter-rouge">pnpm</code>.</p>
+
+<p>Puis vérifies que l’installation s’est bien passée</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>node <span class="nt">--version</span>
+npm <span class="nt">--version</span>
+</code></pre></div></div>
+
+<h3 id="43-pm2">4.3 PM2</h3>
+
+<p>PM2 est un gestionnaire de processus qui va t’aider à gérer et à garder ton application en ligne. Si tu lançes un processus node (npm run dev) dans ton terminal, celui ci sera coupé, lorsque tu te déconnecteras. PM2 va te permettre de lancer ces processus en mode détaché (en arrière plan).</p>
+
+<p>PM2 offre beaucoup d’autres possibilités également dans la gestion de tes logs, tes ressources <a href="https://pm2.keymetrics.io/docs/usage/quick-start/">plus d’infos</a></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>npm <span class="nb">install </span>pm2@latest <span class="nt">-g</span>
+</code></pre></div></div>
+
+<p>Ok, je crois que tu es bon pour les installation de base…
+Il te restera <strong>Let’s encrypt</strong>, mais plus tard…</p>
+
+<h2 id="5-configuration-du-serveur-web">5 Configuration du serveur web</h2>
+
+<h3 id="51-nginx">5.1 Nginx</h3>
+
+<p>Pour commencer, tu vas maintenant installer le logiciel de serveur Web Nginx.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt <span class="nb">install </span>nginx
+</code></pre></div></div>
+
+<p>Le plus simple pour vérifier si tout s’est bien passé, est de regarder avec ton client d’API (bruno, postman, insomnia, etc.) si tu reçois bien un status(200) lorsque tu requêtes ton nom de domaine. (Passe en mode <code class="language-plaintext highlighter-rouge">raw</code> pour regarder le code <code class="language-plaintext highlighter-rouge">html</code>)</p>
+
+<p class="alert-warning">Tu ne peux pas tester pour le moment avec ton navigateur. La plupart des navigateurs, pour des raisons de sécurité, bloquent les requêtes en http (Il faut du https). Nous y reviendrons à la fin de l’atelier.</p>
+
+<p class="alert-info">Mais d’où vient cette page web ?</p>
+<p>Par défaut, <strong><em>Nginx</em></strong> va placer le code à exécuter dans le dossier <strong><em>/var/www/html</em></strong>
+Si tu t’y déplaces, tu verras qu’un fichier <code class="language-plaintext highlighter-rouge">index.nginx-debian.html</code> est présent. C’est la page d’accueil par défaut de Nginx.
+Cela signifie que tout est ok et correctement installé.</p>
+
+<p class="alert-warning">Avant de continuer, nous avons encore un conflit de droit d’utilisateur.
+En effet, l’installation de Nginx crée un nouvel utili spécifique <code class="language-plaintext highlighter-rouge">www-data</code>. Ton <code class="language-plaintext highlighter-rouge">user</code>n’a donc pas de droit d’écriture dans ses dossiers. Hors, tu vas devoir cloner ton projet chez lui (<code class="language-plaintext highlighter-rouge">www-data</code>).</p>
+
+<p>AAAAAAAAAAAAAAHHH!!!! windows est tellement plus simple sans tout ses verrouillages.
+Certes, mais ceci est mis en place pour des raisons de sécurité.</p>
+
+<ul>
+  <li>Alors, ajoutes notre <code class="language-plaintext highlighter-rouge">user</code> au groupe <code class="language-plaintext highlighter-rouge">www-data</code> (on va être copains) : <code class="language-plaintext highlighter-rouge">sudo usermod -aG www-data $USER</code></li>
+  <li>Puis ajoutes ton user en propriétaire du dossier cible : <code class="language-plaintext highlighter-rouge">sudo chown -R $USER:www-data /var/www/html</code></li>
+  <li>Et enfin, appliques les bonnes permissions <code class="language-plaintext highlighter-rouge">sudo chmod -R 775 /var/www/html</code></li>
+</ul>
+
+<h3 id="52-déployer-un-site-static">5.2 Déployer un site static</h3>
+
+<p>Pour commencer, vas dans ce fameux dossier <code class="language-plaintext highlighter-rouge">var/www/html</code> puis clones un projet static (HTML, CSS, JS).
+Si tu n’en as pas sous le coude : <code class="language-plaintext highlighter-rouge">https://github.com/jujuck/Memorize.git</code></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git clone &lt;ton_url_de_repo&gt;
+</code></pre></div></div>
+
+<p><strong><em>Normalement, tu n’as pas besoin d’éxécuter la commande en <code class="language-plaintext highlighter-rouge">sudo</code>. Si oui, il faudra revenir sur les 2 opération <code class="language-plaintext highlighter-rouge">git</code>et <code class="language-plaintext highlighter-rouge">nginx</code>de gestion de droit</em></strong></p>
+
+<p>Super!!!
+Si tu vas sur ton client API et que tu ajoutes le nom de ton dossier à ton nom de domaine, tu devrais accéder à ton site web (Attention, le fichier racine doit être un <strong><em>index.html</em></strong>)
+Exemple http://mondomain.dev/Memorize</p>
+
+<h3 id="53-un-peu-de-sécurité">5.3 Un peu de sécurité</h3>
+
+<p>Sans indication supplémentaire, <strong><em>Nginx</em></strong> expose donc le dossier <strong><em>/var/www/html</em></strong> et l’url nous permet d’accéder aux sous-dossiers et fichiers à l’intérieur.
+Mais, ceci peut permettre également à une personne malveillante de l’explorer à sa guise.</p>
+
+<p>Tu vas donc mettre un peu de configuration supplémentaire pour verrouiller tout cela.
+La configuration principale de <strong><em>Nginx</em></strong> se situe dans <code class="language-plaintext highlighter-rouge">/etc/nginx</code>. On va y éditer le fichier <code class="language-plaintext highlighter-rouge">/sites-available/default</code></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>nano /etc/nginx/sites-available/default
+</code></pre></div></div>
+
+<p>Tu devrais y vois un code ressemblant à ceci</p>
+
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">server {</span>
+    <span class="s">listen 80 default_server;</span>
+    <span class="s">listen [::]:80 default_server;</span>
+
+    <span class="s"># Chemin racine des fichiers du site web</span>
+    <span class="s">root /var/www/html;</span>
+
+    <span class="s"># Page d'index par défaut</span>
+    <span class="s">index index.html index.htm index.nginx-debian.html;</span>
+
+    <span class="s"># Nom du serveur (domaine ou IP)</span>
+    <span class="s">server_name _;</span>
+
+    <span class="s">location / {</span>
+        <span class="s"># Premier choix du fichier à renvoyer</span>
+        <span class="s">try_files $uri $uri/ =404;</span>
+    <span class="s">}</span>
+
+    <span class="s"># Exemple de configuration pour les erreurs </span><span class="m">404</span>
+    <span class="c1"># error_page 404 /custom_404.html;</span>
+    <span class="c1"># location = /custom_404.html {</span>
+    <span class="c1">#     root /var/www/html;</span>
+    <span class="c1">#     internal;</span>
+    <span class="c1"># }</span>
+
+    <span class="c1"># Configuration pour PHP si PHP-FPM est utilisé</span>
+    <span class="c1"># location ~ \.php$ {</span>
+    <span class="c1">#     include snippets/fastcgi-php.conf;</span>
+    <span class="c1">#     fastcgi_pass unix:/var/run/php/php7.4-fpm.sock;</span>
+    <span class="c1"># }</span>
+
+    <span class="c1"># Sécurité supplémentaire (interdire l'accès aux .htaccess)</span>
+    <span class="s">location ~ /\.ht {</span>
+        <span class="s">deny all;</span>
+    <span class="s">}</span>
+
+<span class="err">}</span>
+
+</code></pre></div></div>
+
+<p>A la place de :</p>
+
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">location / {</span> <span class="c1"># Premier choix du fichier à renvoyer</span>
+    <span class="s">try_files $uri $uri/ =404;</span>
+<span class="err">}</span>
+</code></pre></div></div>
+
+<p>Insères le code ci dessous:</p>
+
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Empêcher l'accès à la racine www/html</span>
+<span class="s">location / {</span>
+    <span class="s">root /var/www/html;</span>
+    <span class="s">deny all;</span> <span class="c1"># Bloque l'accès à tout sauf aux exceptions ci-dessous</span>
+<span class="err">}</span>
+
+
+<span class="c1"># Active une route /memorize pour accéder à la ressource</span>
+<span class="s">location /memorize {</span>
+    <span class="s">alias /var/www/html/Memorize;</span>
+    <span class="s">try_files $uri $uri/ =404;</span>
+    <span class="s">autoindex on;</span> <span class="c1"># active la navigation dans les dossiers enfants (accès aux images et assets)</span>
+<span class="err">}</span>
+</code></pre></div></div>
+
+<p>Puis recharges <strong><em>Nginx</em></strong> pour qu’il exécute ces nouvelles règles de configuration.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>systemctl reload nginx
+</code></pre></div></div>
+
+<p>Tests… Tu peux normalement accèder à <code class="language-plaintext highlighter-rouge">/memorize</code> mais plus à la racine <code class="language-plaintext highlighter-rouge">/</code> dans ton client API.</p>
+
+<h3 id="53-passons-au-reverse-proxy">5.3 Passons au reverse proxy</h3>
+
+<p>Tu vas te servir du système de routing natif de Nginx pour orienter les requêtes entrantes sur le serveur vers un service spécifique. Actuellement, tu <strong><em>routes</em></strong> les requêtes <code class="language-plaintext highlighter-rouge">http://&lt;nom_de_domain&gt;/memorize</code> vers le dossier <code class="language-plaintext highlighter-rouge">/var/www/html/Memorize</code></p>
+
+<p>On va donc faire pareil, mais vers des <strong>ports</strong> du réseau local (localhost) de ta machine (ceux du client et de l’api).</p>
+
+<h4 id="dans-ton-dossier-home">Dans ton dossier <code class="language-plaintext highlighter-rouge">home</code></h4>
+
+<p>Clone ton projet en utilisant <strong>git</strong> précedemment utilisé. Tu peux le faire en <strong><em>https</em></strong> car normalement, tu ne dois pas réaliser de développement en <strong><em>prod</em></strong> et n’auras donc <strong><em>jamais</em></strong> à faire de <code class="language-plaintext highlighter-rouge">push</code>.
+Si besoin, charges la branche que tu souhaites déployer, sinon reste sur <code class="language-plaintext highlighter-rouge">main</code></p>
+
+<h4 id="configure-ton-projet">Configure ton projet</h4>
+
+<ul>
+  <li>Installation des dépendances</li>
+  <li>Gestion des variables d’environnement si besoin</li>
+</ul>
+
+<p class="alert-info">🙏🙏🙏 Derrière Nginx, nos 2 services <strong><em>client</em></strong> et <strong><em>api</em></strong> se retrouvent avec la même origine (Ton nom de domaine). tu n’as plus besoin de configurer de <strong><em>cors</em></strong>.</p>
+
+<h4 id="lances-tes-services-client-et-server">Lances tes services client et server</h4>
+
+<p><strong>Pour le serveur</strong></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd </span>api
+pm2 start <span class="s2">"npm run dev"</span> <span class="nt">--name</span> server
+</code></pre></div></div>
+
+<p><strong>Pour le client</strong></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>npm run build
+pm2 start <span class="s2">"npm run preview"</span> <span class="nt">--name</span> client
+</code></pre></div></div>
+
+<p>👀👀👀 En production, le port vite est 4173</p>
+
+<p><strong>Vérification</strong></p>
+
+<p>Pour rappel, <code class="language-plaintext highlighter-rouge">pm2</code> va lancer notre serveur en mode détaché. Si aucune erreur n’est indiqué dans le terminal, c’est que tout est bon.
+Tu peux vérifier en lançant la commande :</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pm2 <span class="nb">ls</span>
+</code></pre></div></div>
+
+<p><img src="/screenshot-pm2-list-running-app.png" alt="" /></p>
+
+<h4 id="mets-à-jour-ta-config-nginx-pour-orienter-les-réquêtes-entrantes-vers-le-bon-service">Mets à jour ta config Nginx pour orienter les réquêtes entrantes vers le bon service.</h4>
+
+<p>Pour cela, tu vas de nouveau éditer le fichier <strong>sites-available/default</strong>. Si tu as oublié la commande, pas de souci. Utilises la flèche vers le haut pour retrouver les anciennes commandes. Une fois le fichier en mode édition, remplaces le code insérer précedemment par celui ci dessous :</p>
+
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Empêcher l'accès à la racine www/html sauf pour /memorize</span>
+<span class="c1">#location / {</span>
+<span class="c1">#       root /var/www/html;</span>
+<span class="c1">#       deny all; # Bloque l'accès à tout sauf aux exceptions ci-dessous</span>
+<span class="c1">#}</span>
+
+<span class="s">location / {</span>
+    <span class="s">proxy_pass http://localhost:4173;</span> <span class="c1">#Oriente les requetes vers la racine de Nginx vers le localhost:4173, notre client</span>
+    <span class="s">proxy_http_version 1.1;</span>
+    <span class="s">proxy_set_header Upgrade $http_upgrade;</span>
+    <span class="s">proxy_set_header Connection 'upgrade';</span>
+    <span class="s">proxy_set_header Host $host;</span>
+    <span class="s">proxy_cache_bypass $http_upgrade;</span>
+<span class="err">}</span>
+
+<span class="s">location /api {</span>
+    <span class="s">proxy_pass http://localhost:4000;</span> <span class="c1">#Oriente les requêtes vers la /api vers le localhost:4000. L'uri /api est conservé</span>
+    <span class="s">proxy_http_version 1.1;</span>
+    <span class="s">proxy_set_header Upgrade $http_upgrade;</span>
+    <span class="s">proxy_set_header Connection 'upgrade';</span>
+    <span class="s">proxy_set_header Host $host;</span>
+    <span class="s">proxy_cache_bypass $http_upgrade;</span>
+<span class="err">}</span>
+
+<span class="s">location /memorize {</span>
+    <span class="s">alias /var/www/html/Memorize;</span>
+    <span class="s">try_files $uri $uri/ =404;</span>
+    <span class="s">autoindex on;</span> <span class="c1"># Facultatif : affiche la liste des fichiers si index.html absent</span>
+<span class="err">}</span>
+</code></pre></div></div>
+
+<p>👀👀👀 N’oublies pas de rechercher Nginx.
+Normalement, si tu retournes sur ton Client API préféré et que tu cherches à accéder à la racine de ton nom de domaine, tu devrais accéder au code <code class="language-plaintext highlighter-rouge">html</code> de ton index.</p>
+
+<p>Cool. Et maintenant, sécurises tout cela pour le voir dans le navigateur….</p>
+
+<h2 id="6-letencrypt-et-le-certificat-ssl">6. Let’encrypt et le certificat SSL</h2>
+
+<p>Voici le lien de la documentation officielle OVH pour en savoir plus sur le certificat SSL.
+<a href="https://help.ovhcloud.com/csm/en-vps-install-ssl-certificate?id=kb_article_view&amp;sysparm_article=KB0066249">Doc</a></p>
+
+<h3 id="62---installation-de-certbot">6.2 - Installation de Certbot</h3>
+
+<p>Certbot est un outil permettant de gérer automatiquement les certificats <strong>Let’s Encrypt</strong>. Suis les étapes ci-dessous pour installer Certbot.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt update
+<span class="nb">sudo </span>apt <span class="nb">install </span>certbot
+</code></pre></div></div>
+
+<p>Vérifies que Certbot est correctement installé en exécutant la commande suivante :</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>certbot <span class="nt">--version</span>
+</code></pre></div></div>
+
+<p>Tu devrais voir la version de Certbot installée.</p>
+
+<h3 id="63---obtenir-un-certificat-ssl-avec-lets-encrypt">6.3 - Obtenir un certificat SSL avec Let’s Encrypt</h3>
+
+<p>Installes le plugin Certbot pour Nginx :</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt <span class="nb">install </span>python3-certbot-nginx <span class="nt">-y</span>
+</code></pre></div></div>
+
+<p>Généres le certificat SSL :</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>certbot <span class="nt">--nginx</span> <span class="nt">-d</span> your_domain
+</code></pre></div></div>
+
+<p class="alert-info">Un certificat SSL est temporellement contraint. Ce qui veut dire, qu’il possède une date d’expiration (3ois, 6mois). Il faut donc le renouveller régulièrement.</p>
+
+<p>Certbot configurera automatiquement le certificat SSL et la redirection HTTPS. Vérifiez que votre site web est accessible en HTTPS.</p>
+
+<p>Si tout s’est bien déroulé, tu devrais maintenant pouvoir accéder à ton app React dans ton navigateur avec toutes les données.
+💪 Félicitations 💯💯💯</p>
+
+    </main>
+    <footer>
+    &copy; 2025 <a href="https://www.wildcodeschool.com" target="_blank" title="visit Wild Code School website">Wild Code School</a>
+</footer>
+</body>
+</html>
