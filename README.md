@@ -85,7 +85,80 @@ Si tout est ok, tu dois pouvoir accéder à ton `api` dans ton navigateur.
 
 ### 4.2 DockerFile dans la couche client (frontend)
 
+#### A- Configuration vite
+
+Pour commencer, nous allons devoir modifier la configuration de vite. Par défaut, vite écoute et réponds uniquement à notre réseau `localhost`. Dans notre `vite.config.ts`, tu vas ajouter une clé "preview"
+
+```typescript
+export default defineConfig({
+  plugins: [react()],
+  preview: {
+    host: "0.0.0.0",
+  },
+});
+```
+
+Nota Bene : si tu veux développer ton code sous docker, il faudra également modifier ce fichier avec la clé "server".
+De plus, selon ton choix, il est peut être utile de déclarer un port spécifique pour ton App en preview (cf doc vite)
+
+#### B- Dockerfile du client
+
+Dans la même logique que le `Dockerfile` de ton API, nous allons ajouter :
+
+- `FROM node:lts-alpine as RUNNER` : prépare l'OS de déploiement dans ton container
+- `WORKDIR /app` : créer un dossier de stockage pour ton app
+- `COPY *.json ./` : copie l'ensemble des fichiers de configuration au format json
+- `RUN npm install` : installe les `node_modules` dans ton container
+- `COPY . .` : copie tous dans le dossier du container
+- `RUN npm run build` : compile le code de `typescript` vers `javascript`
+- `EXPOSE ${le port spécifique à ta configuration}`: expose le port de ton api
+- `CMD ["npm", "run", "preview"]`: exécute le code de l'api 'run time'
+
+Attention, ton `Dockerfile`demande une copie intégrale de ton dossier, ceci est possible en production car les node_modules ne sont pas intégrés à ton **Repository GitHub**. Sinon, tu aurais dû ajouter un fichier `.dockerignore`.
+
+Pour finir, teste ton fichier `Dockerfile` en buildant ton client pour en l'éxécutant
+
+```bash
+docker build -t client .
+docker run -p <le_port_de_ta_configuration>:<le_port_de_ta_configuration> client
+```
+
 ### 4.3 Docker Compose pour orchester
+
+Pour débuter cette partie, regardes si ton Application Fullstack fonctionne corrrectement en lançant les 2 containers.
+Il y a peut être des problèmes de d'url de requêtes à corriger, des erreurs CORS...
+
+Une fois que tu as noté et/ou résolu les erreurs, tu vas pouvoir passer à l'**Orchestration**
+
+A la racine de ton projet, crée un fichier `docker-compose.yml`
+A l'intérieur et copie-colle le code suivant
+
+```yml
+services:  // C'est la propriété de début
+  api: // tag de ton image
+    build: ./api // Source pour trouver le Dockerfile
+    ports:
+      - 3000:3000 // Binding de port entre la machine et le container
+    command: npm run prod // Commande d'éxécution
+    restart: always
+    environment: // Déclaration des variables d'env si non sensible
+      - CLIENT_URL=http://localhost:4173
+      - PORT=4000
+
+  client: // tag de ton image
+    build: ./client // Source pour le Dockerfile
+    command: npm run preview // Commande d'éxécution
+    restart: always
+    ports:
+      - 4173:4173 // Binding de port entre la machine et le container
+
+```
+
+Une fois cela fait, enregistre et teste en lançant la commandes
+
+```bash
+docker compose up --build
+```
 
 ## 5. Configuration du serveur de déploiement
 
