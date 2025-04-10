@@ -187,7 +187,7 @@ Sur ton VPS, les ressources sont limitées. Tu peux avoir un aperçu de celle-ci
 On voit dans l'illustration ci dessous, que j'utilise 40% de ma RAM mais peut de mes ressources en stockage (Hard Disk).
 Dans ce cas, je peux basculer une partie de mon espace de stockage en mémoire vive. C'est un systeme de swap (mémoire tampon au format fichier). On peut voir cela comme une extension de la mémoire.
 
-![](./vps_ressources_example.png")
+![](./vps_ressources_example.png)
 
 Comment procéder ? Exécute les commandes ci dessous les unes après les autres
 
@@ -218,17 +218,17 @@ Maintenant,
 
 A ce stade si tout est ok, tu devrais toujours accéder à ton app dans ton navigateur
 
-- Stop les process tournant avec `pm2` (cf Doc https://pm2.keymetrics.io/docs/usage/process-management/)
+- Stop les process tournant avec `pm2` [doc](https://pm2.keymetrics.io/docs/usage/process-management/)
 
 ### 5.3 Installation de Docker et lancement du docker compose
 
-Pour installer Docker sur ton VPS, le mieux et le plus simple est de suivre la documentation officielle
+Pour installer **Docker** sur ton VPS, le mieux et le plus simple est de suivre la documentation officielle
 👀👀👀 [doc](https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository)
 
 Si tout est bien configuré, tu as du accéder au container Hello World de `Docker`
 
-Cool, pour éviter d'avoir a passer en mode `sudo` à cahque fois, nous pouvons configurer notre serveur
-La documentation officielle de `Docker`nous explique comment faire 👀👀👀[doc](https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user)
+Cool, pour éviter d'avoir a passer en mode `sudo` à chaque fois, tu peuxs configurer ton serveur
+La documentation officielle de `Docker` nous explique comment faire 👀👀👀[doc](https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user)
 
 Une fois cela fait, tu peux te déplacer dans ton dossier de projet et lancer :
 
@@ -236,7 +236,7 @@ Une fois cela fait, tu peux te déplacer dans ton dossier de projet et lancer :
 docker compose up --build
 ```
 
-Les containers devraient s'éxécuter et si le `mapping` de tous tes `$port` sont bons, ton application devrait de nouveau être accessible en ligne.
+Les containers devraient s'éxécuter et si le `mapping` de tous tes `ports` est bon, ton application devrait de nouveau être accessible en ligne.
 Si ce n'est pas le cas, vérifie :
 
 {: .alert-warning }
@@ -246,7 +246,7 @@ Si ce n'est pas le cas, vérifie :
 - ton fichier `index.ts` de ton api
 - ton fichier `client.ts` de ton client
 
-N'hésites pas à `push/pull` pour mettre à jour le code serveur. Pense à couper les containeurs et les `rebuilder` à chaque fois
+N'hésites pas à `push/pull` pour mettre à jour le code serveur. Penses à couper les containeurs et les `rebuilder` à chaque fois
 
 ### 5.5 Ecriture du script bash
 
