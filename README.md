@@ -7,7 +7,7 @@ Apprendre à automitiser le déployment d'une application sous Docker
 - Docker
 - Docker Compose
 - Bash
-- github Action
+- Github Action
 
 ## 2. Pré requis
 
@@ -16,7 +16,7 @@ Apprendre à automitiser le déployment d'une application sous Docker
 - Connaitre git, React et GraphQL et Apollo
 
 Avant de commencer, tu vas devoir te connecter à ton VSP.
-Puis, consulte ton fichier de configuration de `Nginx`
+Puis, consultes ton fichier de configuration de `Nginx`
 
 ```bash
 cat /etc/nginx/sites-available/default
@@ -35,12 +35,15 @@ Dans la suite de l'atelier, tu as le choix entre 2 possibilités :
 
 ## 3. Explication et context
 
-Dans cet atelier, tu vas apprendre à déployer une application et à automatiser le processus (Continous deploiement). Pour réaliser cela de manière la plus sûr possible, tu vas utiliser tes connaissances nouvellement apprises pour isoler tes couches de code via docker. Puis, tu vas booster ton serveur pour que celui-ci puisse réaliser le build des containers plus facilement (C'est l'étape Docker qui coûte le plus cher en ressource). Pour terminer, nous allons écrire un script bash de déploiment, celui ci sera executé via une action Github..
-So let' go!!!
+{: .alert-info }
+Dans cet atelier, tu vas apprendre à déployer une application et à automatiser le processus (**Continous Deploiement**). Pour réaliser cela de manière la plus sûr possible, tu vas utiliser tes connaissances nouvellement apprises pour isoler tes couches de code via **Docker**. Puis, tu vas booster ton serveur pour que celui-ci puisse réaliser le `build` des containers plus facilement (C'est l'étape **Docker** qui coûte le plus cher en ressource). Pour terminer, nous allons écrire un script `bash` de déploiment, celui ci sera executé via une **action Github**.
+
+💪 💪 💪So let' go!!!
 
 ## 4. Configuration Docker
 
-:warning: Avant de travailler sur le déploiement, vérifie que ton code fonctionne correctement puis commites ton travail. Ensuite créés une branche spécifique pour ton déploiement. Cela permettra de ne pas casser ton code.
+{: .alert-warning }
+Avant de travailler sur le déploiement, vérifie que ton code fonctionne correctement puis commites ton travail. Ensuite créés une branche spécifique pour ton déploiement. Cela permettra de ne pas casser ton code.
 
 ### 4.1 DockerFile dans la couche serveur (backend)
 
@@ -68,7 +71,8 @@ Dans ton fichier `Dockerfile`, ajoutes les clés suivantes
 - `RUN npm install` : installe les `node_modules` dans ton container
 - `COPY src src` : copie le dossier src dans ton container dans un dossier du même nom
 
-:warning: si ton projet nécessite d'autres dossiers spécifiques pour les logs, les assets, les ressources publiques... hors `build`, il faut également les copier à ce moment là
+{: .alert-warning }
+Si ton projet nécessite d'autres dossiers spécifiques pour les logs, les assets, les ressources publiques... hors `build`, il faut également les copier à ce moment là
 
 - `RUN npm run build` : compile le code de `typescript` vers `javascript`
 - `EXPOSE ${le port spécifique à ta configuration}`: expose le port de ton api
@@ -87,7 +91,7 @@ Si tout est ok, tu dois pouvoir accéder à ton `api` dans ton navigateur.
 
 #### A- Configuration vite
 
-Pour commencer, nous allons devoir modifier la configuration de vite. Par défaut, vite écoute et réponds uniquement à notre réseau `localhost`. Dans notre `vite.config.ts`, tu vas ajouter une clé "preview".
+Pour commencer, tu vas devoir modifier la configuration de vite. Par défaut, vite écoute et réponds uniquement à notre réseau `localhost`. Dans notre `vite.config.ts`, tu vas ajouter une clé "preview".
 De plus, pour des raisons de sécurité, `vite` bloque par défaut les requêtes venant de domaines non listés spécifiquement
 
 ```typescript
@@ -100,12 +104,13 @@ export default defineConfig({
 });
 ```
 
-Nota Bene : si tu veux développer ton code sous docker, il faudra également modifier ce fichier avec la clé "server".
+{: .alert-info }
+Si tu veux développer ton code sous docker, il faudra également modifier ce fichier avec la clé "server".
 De plus, selon ton choix, il est peut être utile de déclarer un port spécifique pour ton App en preview (cf doc vite)
 
 #### B- Dockerfile du client
 
-Dans la même logique que le `Dockerfile` de ton API, nous allons ajouter :
+Dans la même logique que le `Dockerfile` de ton API, tu vas ajouter :
 
 - `FROM node:lts-alpine as RUNNER` : prépare l'OS de déploiement dans ton container
 - `WORKDIR /app` : créer un dossier de stockage pour ton app
@@ -116,9 +121,9 @@ Dans la même logique que le `Dockerfile` de ton API, nous allons ajouter :
 - `EXPOSE ${le port spécifique à ta configuration}`: expose le port de ton api
 - `CMD ["npm", "run", "preview"]`: exécute le code de l'api 'run time'
 
-Attention, ton `Dockerfile`demande une copie intégrale de ton dossier, ceci est possible en production car les node_modules ne sont pas intégrés à ton **Repository GitHub**. Sinon, tu aurais dû ajouter un fichier `.dockerignore`.
+Attention, ton `Dockerfile` demande une copie intégrale de ton dossier, ceci est possible en production car les **node_modules** ne sont pas intégrés à ton **Repository GitHub**. Sinon, tu aurais du ajouter un fichier `.dockerignore`.
 
-Pour finir, teste ton fichier `Dockerfile` en buildant ton client pour en l'éxécutant
+Pour finir, testes ton fichier `Dockerfile` en buildant ton client pour en l'éxécutant
 
 ```bash
 docker build -t client .
@@ -127,13 +132,13 @@ docker run -p <le_port_de_ta_configuration>:<le_port_de_ta_configuration> client
 
 ### 4.3 Docker Compose pour orchester
 
-Pour débuter cette partie, regardes si ton Application Fullstack fonctionne corrrectement en lançant les 2 containers.
-Il y a peut être des problèmes de d'url de requêtes à corriger, des erreurs CORS...
+Pour débuter cette partie, regardes si ton application FullStack fonctionne corrrectement en lançant les 2 containers séparement.
+Il y a peut être des problèmes dans d'url de requêtes à corriger, des erreurs CORS...
 
 Une fois que tu as noté et/ou résolu les erreurs, tu vas pouvoir passer à l'**Orchestration**
 
-A la racine de ton projet, crée un fichier `docker-compose.yml`
-A l'intérieur et copie-colle le code suivant
+A la racine de ton projet, crées un fichier `docker-compose.yml`.
+A l'intérieur et copie-colles le code suivant :
 
 ```yml
 services:  // C'est la propriété de début
@@ -158,7 +163,7 @@ services:  // C'est la propriété de début
 
 ```
 
-Une fois cela fait, enregistre et teste en lançant la commandes
+Une fois cela fait, enregistres et testes en lançant la commandes
 
 ```bash
 docker compose up --build
@@ -171,10 +176,12 @@ Si tout se passe bien, pense à commiter ton code et à le mettre à jour en lig
 ### 5.1 Boost du serveur avec ajout de mémoire swap
 
 Sur ton VPS, les ressources sont limitées. Tu peux avoir un apreçu de celle-ci lors de ta connexion.
+
+{: .alert-info }
 On voit dans l'illustration ci dessous, que j'utilise 40% de ma RAM mais peut de mes ressources en stockage (Hard Disk).
 Dans ce cas, je peux basculer une partie de mon espace de stockage en mémoire vive. C'est un systeme de swap (mémoire tampon au format fichier). On peut voir cela comme une extension de la mémoire.
 
-<img src="./vps_ressources_example.png" alt="Illustration des ressources d'un VPS" />
+![](./vps_ressources_example.png" alt="Illustration des ressources d'un VPS)
 
 Comment procéder ? Exécute les commandes ci dessous les unes après les autres
 
@@ -188,17 +195,19 @@ sudo swapon --show # Affiche les espaces de swap actifs.
 free -h # Affiche l'état de la mémoire du système (-h pour human-readable)
 ```
 
-Super, ton VPS est maintenant booster en Mémoire. Cela sera particulièrement utile pour les `build` docker qui en nécessite beaucoup.
+Super, ton VPS est maintenant booster en Mémoire. Cela sera particulièrement utile pour les `build` **Docker** qui en nécessite beaucoup.
+
+{: .alert-warning }
 Attention, cette méthode n'est pas magique non plus. Il est recommandé de respecter une certaine proportion entre la mémoire physique (RAM) et notre swap
 
 ### 5.2 Mise à jour du projet ou clone
 
 Maintenant,
 
-- vérifie que ton app tourne toujours sur ton navigateur (En cas de problème, la priorité est de relancer ton app avant de passer à la suite)
-- déplace toi dans le dossier de ton projet Github (`cd app/repo/...`)
-- met le à jour suivant la branche précédente (`git fetch --all && git switch <nom-de-la-branche>`)
-- renseigne tes variables d'environnement si besoin ???
+- Vérifie que ton app tourne toujours sur ton navigateur (En cas de problème, la priorité est de relancer ton app avant de passer à la suite)
+- Déplace toi dans le dossier de ton projet Github (`cd app/repo/...`)
+- Met le à jour suivant la branche précédente (`git fetch --all && git switch <nom-de-la-branche>`)
+- Renseigne tes variables d'environnement si besoin ???
 - Execute ton code avec `pm2`.
 
 A ce stade si tout est ok, tu devrais toujours accéder à ton app dans ton navigateur
@@ -207,13 +216,13 @@ A ce stade si tout est ok, tu devrais toujours accéder à ton app dans ton navi
 
 ### 5.3 Installation de Docker et lancement du docker compose
 
-Pour isntaller Docker sur ton VPS, le mieux et le plus simple est de suivre la documentation officielle
-https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository
+Pour installer Docker sur ton VPS, le mieux et le plus simple est de suivre la documentation officielle
+👀👀👀 [doc](https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository)
 
 Si tout est bien configuré, tu as du accéder au container Hello World de `Docker`
 
 Cool, pour éviter d'avoir a passer en mode `sudo` à cahque fois, nous pouvons configurer notre serveur
-La documentation officielle de `Docker`nous explique comment faire (https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user)
+La documentation officielle de `Docker`nous explique comment faire 👀👀👀[doc](https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user)
 
 Une fois cela fait, tu peux te déplacer dans ton dossier de projet et lancer :
 
@@ -224,6 +233,8 @@ docker compose up --build
 Les containers devraient s'éxécuter et si le `mapping` de tous tes `$port` sont bons, ton application devrait de nouveau être accessible en ligne.
 Si ce n'est pas le cas, vérifie :
 
+{: .alert-warning }
+
 - ta configuration nginx (`cat /etc/nginx/sites-available/default`)
 - ton docker-compose (la propriété `ports`, le nom des variables d'environnement et leurs ports respectifs)
 - ton fichier `index.ts` de ton api
@@ -233,26 +244,36 @@ N'hésites pas à `push/pull` pour mettre à jour le code serveur. Pense à coup
 
 ### 5.5 Ecriture du script bash
 
-- mise à jour en pull
-- stop running container
-- prune container (free spaces)
-- launch docker compose avec build
+Maintenant que tu as réussi à déployer ton application avec `Docker` à la main, essaie de noter toutes les étapes automatisables.
+Ton objectif est de la reproduire dans un script `bash` qui sera exécuté.
+
+Commence par créer et éditer un fichier `deploy.sh` (Place le dans le repo)
 
 ```bash
-cd ./Bac-A-Sable-Demo
-git switch test@deploy_with_docker
-git pull
+cd <path_vers_ton_dossier_de_projet /> # O se déplace a la racine du dossier de projet
+git switch test@deploy_with_docker # On force la bascule sur notre branche de référence (main en cas de merge)
+git pull # On met à jour la branche
 
 
-docker stop $(docker ps -a -q)
+docker stop $(docker ps -a -q) # On arrête tous les containers en cours
 
-docker compose up --build -d
+docker compose up --build -d # On relance l'orchestration des containers. Cette commande peut être ajustée si certains paramètres supplémentaires sont nécessaires (fichier d'env, nom du fichier, ...)
 
-docker system prune -a -f
+docker system prune -a -f # On supprime tous les résidus d'images non utilisé (Cela libère les ressources)
 ```
+
+Pour vérifier que ton script fonctionne, éxécute les commandes ci dessous :
+
+```bash
+docker compose stop
+
+cd <Chemin vers ton repo />
+bash deploy.sh
+```
+
+Normalement, tu ne devrais pas avoir d'erreur dans ton terminal et ton application devrait toujours être disponible dans ton navigateur.
 
 ## 6 Github actions
 
-- Remplir les variables d'env sur GITHUB
-
-- Préparer le script
+Dernière et Ultime étape de notre projet de **Continious Deploiement**
+Exécuter notre script de manière automatique lors d'un évenement GitHub (merge sur une branche, push sur une branche, ...)
