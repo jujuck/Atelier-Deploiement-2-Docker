@@ -87,13 +87,15 @@ Si tout est ok, tu dois pouvoir accéder à ton `api` dans ton navigateur.
 
 #### A- Configuration vite
 
-Pour commencer, nous allons devoir modifier la configuration de vite. Par défaut, vite écoute et réponds uniquement à notre réseau `localhost`. Dans notre `vite.config.ts`, tu vas ajouter une clé "preview"
+Pour commencer, nous allons devoir modifier la configuration de vite. Par défaut, vite écoute et réponds uniquement à notre réseau `localhost`. Dans notre `vite.config.ts`, tu vas ajouter une clé "preview".
+De plus, pour des raisons de sécurité, `vite` bloque par défaut les requêtes venant de domaines non listés spécifiquement
 
 ```typescript
 export default defineConfig({
   plugins: [react()],
   preview: {
     host: "0.0.0.0",
+    allowedHosts: ["ton nom de domaine, sous domaine sans http://"],
   },
 });
 ```
@@ -143,12 +145,14 @@ services:  // C'est la propriété de début
     restart: always
     environment: // Déclaration des variables d'env si non sensible
       - CLIENT_URL=http://localhost:4173
-      - PORT=4000
+      - PORT=3000
 
   client: // tag de ton image
     build: ./client // Source pour le Dockerfile
     command: npm run preview // Commande d'éxécution
     restart: always
+     env_file: // Si besoin de variables issus d'un fichier d'env sur la machine
+      - ./client/.env
     ports:
       - 4173:4173 // Binding de port entre la machine et le container
 
@@ -160,21 +164,95 @@ Une fois cela fait, enregistre et teste en lançant la commandes
 docker compose up --build
 ```
 
+Si tout se passe bien, pense à commiter ton code et à le mettre à jour en ligne sur cette branche
+
 ## 5. Configuration du serveur de déploiement
 
 ### 5.1 Boost du serveur avec ajout de mémoire swap
 
+Sur ton VPS, les ressources sont limitées. Tu peux avoir un apreçu de celle-ci lors de ta connexion.
+On voit dans l'illustration ci dessous, que j'utilise 40% de ma RAM mais peut de mes ressources en stockage (Hard Disk).
+Dans ce cas, je peux basculer une partie de mon espace de stockage en mémoire vive. C'est un systeme de swap (mémoire tampon au format fichier). On peut voir cela comme une extension de la mémoire.
+
+<img src="./vps_ressources_example.png" alt="Illustration des ressources d'un VPS" />
+
+Comment procéder ? Exécute les commandes ci dessous les unes après les autres
+
+```bash
+free -h # Affiche l'état de la mémoire du système (-h pour human-readable)
+sudo fallocate -l 4G /swapfile # Créer un fichier vide de 4Giga
+sudo chmod 600 /swapfile #Change les permissions du fichier pour qu’il ne soit accessible que par root.
+sudo mkswap /swapfile # Formate le fichier pour qu’il devienne utilisable comme swap.
+sudo swapon /swapfile #Active le fichier de swap.
+sudo swapon --show # Affiche les espaces de swap actifs.
+free -h # Affiche l'état de la mémoire du système (-h pour human-readable)
+```
+
+Super, ton VPS est maintenant booster en Mémoire. Cela sera particulièrement utile pour les `build` docker qui en nécessite beaucoup.
+Attention, cette méthode n'est pas magique non plus. Il est recommandé de respecter une certaine proportion entre la mémoire physique (RAM) et notre swap
+
 ### 5.2 Mise à jour du projet ou clone
 
-- ajout des .env si besoin
+Maintenant,
 
-### 5.3 Test du docker compose à la main
+- vérifie que ton app tourne toujours sur ton navigateur (En cas de problème, la priorité est de relancer ton app avant de passer à la suite)
+- déplace toi dans le dossier de ton projet Github (`cd app/repo/...`)
+- met le à jour suivant la branche précédente (`git fetch --all && git switch <nom-de-la-branche>`)
+- renseigne tes variables d'environnement si besoin ???
+- Execute ton code avec `pm2`.
 
-### 5.4 Ecriture du script bash
+A ce stade si tout est ok, tu devrais toujours accéder à ton app dans ton navigateur
+
+- Stop les process tournant avec `pm2` (cf Doc https://pm2.keymetrics.io/docs/usage/process-management/)
+
+### 5.3 Installation de Docker et lancement du docker compose
+
+Pour isntaller Docker sur ton VPS, le mieux et le plus simple est de suivre la documentation officielle
+https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository
+
+Si tout est bien configuré, tu as du accéder au container Hello World de `Docker`
+
+Cool, pour éviter d'avoir a passer en mode `sudo` à cahque fois, nous pouvons configurer notre serveur
+La documentation officielle de `Docker`nous explique comment faire (https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user)
+
+Une fois cela fait, tu peux te déplacer dans ton dossier de projet et lancer :
+
+```bash
+docker compose up --build
+```
+
+Les containers devraient s'éxécuter et si le `mapping` de tous tes `$port` sont bons, ton application devrait de nouveau être accessible en ligne.
+Si ce n'est pas le cas, vérifie :
+
+- ta configuration nginx (`cat /etc/nginx/sites-available/default`)
+- ton docker-compose (la propriété `ports`, le nom des variables d'environnement et leurs ports respectifs)
+- ton fichier `index.ts` de ton api
+- ton fichier `client.ts` de ton client
+
+N'hésites pas à `push/pull` pour mettre à jour le code serveur. Pense à couper les containeurs et les `rebuilder` à chaque fois
+
+### 5.5 Ecriture du script bash
 
 - mise à jour en pull
 - stop running container
 - prune container (free spaces)
 - launch docker compose avec build
 
+```bash
+cd ./Bac-A-Sable-Demo
+git switch test@deploy_with_docker
+git pull
+
+
+docker stop $(docker ps -a -q)
+
+docker compose up --build -d
+
+docker system prune -a -f
+```
+
 ## 6 Github actions
+
+- Remplir les variables d'env sur GITHUB
+
+- Préparer le script
