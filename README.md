@@ -47,7 +47,7 @@ Avant de travailler sur le déploiement, vérifie que ton code fonctionne correc
 
 ### 4.1 DockerFile dans la couche serveur (backend)
 
-Dans ton éditeur de code préféré, tu vas ajouter un fichier `Dockerfile` à la racine de ton serveur. Configure celui-ci pour un deploiement (Le serveur doit passer en mode `builder`, à savoir complier ton code `typescript`en `javascript`).
+Dans ton éditeur de code préféré, tu vas ajouter un fichier `Dockerfile` à la racine de ton serveur. Configures celui-ci pour un deploiement (Le serveur doit passer en mode `builder`, à savoir compiler ton code `typescript`en `javascript`).
 
 #### A- Configuration Projet
 
@@ -59,7 +59,7 @@ Dans ton éditeur de code préféré, tu vas ajouter un fichier `Dockerfile` à 
 npm run build
 ```
 
-Un dossier `build` devrait être créer sans erreur. En cas d'erreur, je te laisse regarder et corriger ton code (Enc as de Big Problème, n'hésites pas à demander de l'aide)
+Un dossier `build` devrait être créer sans erreur. En cas d'erreur, je te laisse regarder et corriger ton code (En cas de Big Problème, n'hésites pas à demander de l'aide)
 
 #### B- Dockerfile
 
@@ -78,14 +78,14 @@ Si ton projet nécessite d'autres dossiers spécifiques pour les logs, les asset
 - `EXPOSE ${le port spécifique à ta configuration}`: expose le port de ton api
 - `CMD ["npm", "run", "prod"]`: exécute le code de l'api 'run time'
 
-Tu peux maintenant tester la configuration de manière isolée en lançant les commandes depuis ton dossier `api`
+Tu peux maintenant tester la configuration de manière isolée en lançant les commandes depuis ton dossier `serveur`
 
 ```bash
 docker build -t api .
 docker run -p <le_port_de_ta_configuration>:<le_port_de_ta_configuration> api
 ```
 
-Si tout est ok, tu dois pouvoir accéder à ton `api` dans ton navigateur.
+Si tout est ok, tu dois pouvoir accéder à ton `serveur` dans ton navigateur.
 
 ### 4.2 DockerFile dans la couche client (frontend)
 
@@ -106,11 +106,11 @@ export default defineConfig({
 
 {: .alert-info }
 Si tu veux développer ton code sous docker, il faudra également modifier ce fichier avec la clé "server".
-De plus, selon ton choix, il est peut être utile de déclarer un port spécifique pour ton App en preview (cf doc vite)
+De plus, selon ton choix, il est peut être utile de déclarer un port spécifique pour ton App en preview ([doc](https://vite.dev/config/server-options.html))
 
 #### B- Dockerfile du client
 
-Dans la même logique que le `Dockerfile` de ton API, tu vas ajouter :
+Dans la même logique que le `Dockerfile` de ton **Serveur**, tu vas ajouter :
 
 - `FROM node:lts-alpine as RUNNER` : prépare l'OS de déploiement dans ton container
 - `WORKDIR /app` : créer un dossier de stockage pour ton app
@@ -163,11 +163,17 @@ services:  // C'est la propriété de début
 
 ```
 
+{: .alert-warning }
+Les valeurs de port et de variables d'environnement sont à ajuster à ton projet. Ne laisse pas celles ci par défaut.
+
 Une fois cela fait, enregistres et testes en lançant la commandes
 
 ```bash
 docker compose up --build
 ```
+
+{: .alert-warning }
+Si tu as ajouté un fichier de variable d'environment ou si ton fichier d'**orchestration** n'a pas le même nom, pense à ajuster la commande de lancement
 
 Si tout se passe bien, pense à commiter ton code et à le mettre à jour en ligne sur cette branche
 
@@ -175,13 +181,13 @@ Si tout se passe bien, pense à commiter ton code et à le mettre à jour en lig
 
 ### 5.1 Boost du serveur avec ajout de mémoire swap
 
-Sur ton VPS, les ressources sont limitées. Tu peux avoir un apreçu de celle-ci lors de ta connexion.
+Sur ton VPS, les ressources sont limitées. Tu peux avoir un aperçu de celle-ci lors de ta connexion.
 
 {: .alert-info }
 On voit dans l'illustration ci dessous, que j'utilise 40% de ma RAM mais peut de mes ressources en stockage (Hard Disk).
 Dans ce cas, je peux basculer une partie de mon espace de stockage en mémoire vive. C'est un systeme de swap (mémoire tampon au format fichier). On peut voir cela comme une extension de la mémoire.
 
-![](./vps_ressources_example.png" alt="Illustration des ressources d'un VPS)
+![](./vps_ressources_example.png")
 
 Comment procéder ? Exécute les commandes ci dessous les unes après les autres
 
