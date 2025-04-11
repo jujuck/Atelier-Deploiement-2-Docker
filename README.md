@@ -281,7 +281,7 @@ Normalement, tu ne devrais pas avoir d'erreur dans ton terminal et ton applicati
 
 ## 6. Github actions
 
-Dernière et Ultime étape de notre projet de **Continious Deploiement**
+**Dernière et Ultime étape** de notre projet de **Continious Deploiement**
 Exécuter notre script de manière automatique lors d'un évenement GitHub (merge sur une branche, push sur une branche, ...)
 
 ### 6.1 Paramétrage de Github
@@ -302,11 +302,11 @@ Normalement, tu es passé en mode **Administrateur** et tu as donc accès à un 
 ![](./Github_repo_tabs.png)
 
 {: .alert-warning }
-Si ce n'est pas le cas, demande à ton formateur préféré ou pas de mettre à jour les droits d'utilisateur de ton repo
+Si ce n'est pas le cas, demandes à ton formateur préféré (ou pas) de mettre à jour les droits d'utilisateur de ton repo
 
 #### A- Settings
 
-Dans l'onglet **Settings**, dans le menu à Gauche, clique sur **Secrets and variables** puis **actions** du sous menu **Security**.
+Dans l'onglet **Settings**, dans le menu à Gauche, cliques sur **Secrets and variables** puis **actions** du sous menu **Security**.
 
 ![](./Secrets_variables.png)
 
@@ -325,7 +325,7 @@ Pour créer une nouvelle variable, dans l'onglet central 'Secrets', cliques sur 
 - remplis le champs `secrets` par la valeur de la variable
 
 {: .alert-warning }
-Par mesure de sécurité, les valeurs entrées ne sont plus consultable ensuite. Vérifie bien tes saisies (Pas d'espace mort, minuscules, majuscules, ....)
+Par mesure de sécurité, les valeurs entrées ne sont plus consultables ensuite. Vérifies bien tes saisies (Pas d'espace mort, minuscules, majuscules, ....)
 
 A la fin, tu devrais avoir :
 
@@ -334,9 +334,9 @@ A la fin, tu devrais avoir :
 ### 6.2 Mise en place du Workflow
 
 Retournons dans ton éditeur de code.
-A la racine de ton projet, crées un dossier `.github` avec à l'intérieur un autre dossier `workflows`. Attention, a respecter l'orthographe, elle est determinante pour la plateforme **GitHub**.
+A la racine de ton projet, crées un dossier `.github` avec à l'intérieur un autre dossier `workflows`. Attention, à respecter l'orthographe, elle est déterminante pour la plateforme **GitHub**.
 
-A l'intérieur du dossier `workflows`, crée un fichier `deploy.yml`.
+A l'intérieur du dossier `workflows`, crées un fichier `deploy.yml`.
 Ensuite, copie-colles le code ci dessous :
 
 ```yaml
@@ -366,8 +366,8 @@ jobs: # Liste des actions  à réaliser
 - \*Triggering Event (https://docs.github.com/en/actions/writing-workflows/choosing-when-your-workflow-runs/events-that-trigger-workflows)
 - \*\*MarketPlace d'action GitHub (https://github.com/marketplace?type=actions)
 
-Une fois cela fait, pense à commiter ton travail.
-Patiente un peu avant de `push`
+Une fois cela fait, penses à commiter ton travail.
+Patientes un peu avant de `push`
 
 ### 6.3 Vérification de l'action
 
@@ -375,8 +375,8 @@ Commences par accéder à la page de ton repo, et ouvre l'onglet **Actions**
 
 ![](./Github_Actions-Tab.png)
 
-Maintenant, retourne dans ton terminal et `push` ton code sur Github.
-Retourne sur Github et rafraichit l'onglet.
+Maintenant, retournes dans ton terminal et `push` ton code sur Github.
+Retournes sur Github et rafraichit l'onglet.
 Normalement, ton interface à changer et tu dois voir une ligne portant le nom de ton action (cf workflow).
 Clique dessus, tu peux suivre l'éxécution de ton `script` et utiliser l'**Output** de l'interface Github pour debugger au besoin.
 
