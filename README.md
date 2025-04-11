@@ -363,8 +363,8 @@ jobs: # Liste des actions  à réaliser
 
 {: .alert-info }
 
-- Triggering Event (https://docs.github.com/en/actions/writing-workflows/choosing-when-your-workflow-runs/events-that-trigger-workflows)
-  \*\* MarketPlace d'action GitHub (https://github.com/marketplace?type=actions)
+- \*Triggering Event (https://docs.github.com/en/actions/writing-workflows/choosing-when-your-workflow-runs/events-that-trigger-workflows)
+- \*\*MarketPlace d'action GitHub (https://github.com/marketplace?type=actions)
 
 Une fois cela fait, pense à commiter ton travail.
 Patiente un peu avant de `push`
