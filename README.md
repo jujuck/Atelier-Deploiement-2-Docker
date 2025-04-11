@@ -36,24 +36,24 @@ Dans la suite de l'atelier, tu as le choix entre 2 possibilités :
 ## 3. Explication et context
 
 {: .alert-info }
-Dans cet atelier, tu vas apprendre à déployer une application et à automatiser le processus (**Continous Deploiement**). Pour réaliser cela de manière la plus sûr possible, tu vas utiliser tes connaissances nouvellement apprises pour isoler tes couches de code via **Docker**. Puis, tu vas booster ton serveur pour que celui-ci puisse réaliser le `build` des containers plus facilement (C'est l'étape **Docker** qui coûte le plus cher en ressource). Pour terminer, nous allons écrire un script `bash` de déploiment, celui ci sera executé via une **action Github**.
+Dans cet atelier, tu vas apprendre à déployer une application et à automatiser le processus (**Continous Deploiement**). Pour réaliser cela de manière la plus sûr possible, tu vas utiliser tes connaissances nouvellement apprises pour isoler tes couches de code via **Docker**. Puis, tu vas booster ton serveur pour que celui-ci puisse réaliser le `build` des containers plus facilement (C'est l'étape **Docker** qui coûte le plus cher en ressource). Pour terminer, tu vas écrire un script `bash` de déploiment, celui ci sera executé via une **action Github**.
 
 💪 💪 💪So let' go!!!
 
 ## 4. Configuration Docker
 
 {: .alert-warning }
-Avant de travailler sur le déploiement, vérifie que ton code fonctionne correctement puis commites ton travail. Ensuite créés une branche spécifique pour ton déploiement. Cela permettra de ne pas casser ton code.
+Avant de travailler sur le déploiement, vérifie que ton code fonctionne correctement puis commite ton travail. Ensuite créer une branche spécifique pour ton déploiement. Cela permettra de ne pas casser ton code.
 
 ### 4.1 DockerFile dans la couche serveur (backend)
 
-Dans ton éditeur de code préféré, tu vas ajouter un fichier `Dockerfile` à la racine de ton serveur. Configures celui-ci pour un deploiement (Le serveur doit passer en mode `builder`, à savoir compiler ton code `typescript`en `javascript`).
+Dans ton éditeur de code préféré, tu vas ajouter un fichier `Dockerfile` à la racine de ton serveur. Configure celui-ci pour un déploiement (Le serveur doit passer en mode **_builder_**, à savoir compiler ton code `typescript` en `javascript`).
 
 #### A- Configuration Projet
 
-- Dans ton `package.json`, ajoutes 2 commandes de script, `"build": "npx tsx"` et `"prod": "node ./build/index.js"`
+- Dans ton `package.json`, ajoute 2 commandes de script, `"build": "npx tsx"` et `"prod": "node ./build/index.js"`
 - Dans ton `tsconfig.json`, active les clés `"rootDir": "/src"` et `"outDir": "/build"`
-- Testes ta configuration, dans ton terminal
+- Teste ta configuration, dans ton terminal
 
 ```bash
 npm run build
@@ -63,16 +63,16 @@ Un dossier `build` devrait être créer sans erreur. En cas d'erreur, je te lais
 
 #### B- Dockerfile
 
-Dans ton fichier `Dockerfile`, ajoutes les clés suivantes
+Dans ton fichier `Dockerfile`, ajoute les clés suivantes
 
 - `FROM node:lts-alpine as PROD` : prépare l'OS de déploiement dans ton container
-- `WORKDIR /app` : créer un dossier de stockage pour ton app
+- `WORKDIR /app` : créé un dossier de stockage pour ton app
 - `COPY *.json ./` : copie l'ensemble des fichiers de configuration au format json
 - `RUN npm install` : installe les `node_modules` dans ton container
 - `COPY src src` : copie le dossier src dans ton container dans un dossier du même nom
 
 {: .alert-warning }
-Si ton projet nécessite d'autres dossiers spécifiques pour les logs, les assets, les ressources publiques... hors `build`, il faut également les copier à ce moment là
+Si ton projet nécessite d'autres dossiers spécifiques pour les logs, les assets, les ressources publiques... hors `build`, il faut également les copier à ce moment-là.
 
 - `RUN npm run build` : compile le code de `typescript` vers `javascript`
 - `EXPOSE ${le port spécifique à ta configuration}`: expose le port de ton api
@@ -91,8 +91,8 @@ Si tout est ok, tu dois pouvoir accéder à ton `serveur` dans ton navigateur.
 
 #### A- Configuration vite
 
-Pour commencer, tu vas devoir modifier la configuration de vite. Par défaut, vite écoute et réponds uniquement à notre réseau `localhost`. Dans notre `vite.config.ts`, tu vas ajouter une clé "preview".
-De plus, pour des raisons de sécurité, `vite` bloque par défaut les requêtes venant de domaines non listés spécifiquement
+Pour commencer, tu vas devoir modifier la configuration de **Vite**. Par défaut, vite écoute et réponds uniquement à notre réseau `localhost`. Dans notre `vite.config.ts`, tu vas ajouter une clé "preview".
+De plus, pour des raisons de sécurité, **Vite** bloque par défaut les requêtes venant de domaines non listés spécifiquement
 
 ```typescript
 export default defineConfig({
@@ -113,32 +113,32 @@ De plus, selon ton choix, il est peut être utile de déclarer un port spécifiq
 Dans la même logique que le `Dockerfile` de ton **Serveur**, tu vas ajouter :
 
 - `FROM node:lts-alpine as RUNNER` : prépare l'OS de déploiement dans ton container
-- `WORKDIR /app` : créer un dossier de stockage pour ton app
-- `COPY *.json ./` : copie l'ensemble des fichiers de configuration au format json
+- `WORKDIR /app` : créé un dossier de stockage pour ton app
+- `COPY *.json ./` : copie l'ensemble des fichiers de configuration au format `json`
 - `RUN npm install` : installe les `node_modules` dans ton container
 - `COPY . .` : copie tous dans le dossier du container
 - `RUN npm run build` : compile le code de `typescript` vers `javascript`
 - `EXPOSE ${le port spécifique à ta configuration}`: expose le port de ton api
 - `CMD ["npm", "run", "preview"]`: exécute le code de l'api 'run time'
 
-Attention, ton `Dockerfile` demande une copie intégrale de ton dossier, ceci est possible en production car les **node_modules** ne sont pas intégrés à ton **Repository GitHub**. Sinon, tu aurais du ajouter un fichier `.dockerignore`.
+Attention, ton `Dockerfile` demande une copie intégrale de ton dossier, ceci est possible en production car les **node_modules** ne sont pas intégrés à ton **Repository GitHub**. Sinon, tu aurais dû ajouter un fichier `.dockerignore`.
 
-Pour finir, testes ton fichier `Dockerfile` en buildant ton client pour en l'éxécutant
+Pour finir, teste ton fichier `Dockerfile` en buildant ton client et en l'exécutant
 
 ```bash
 docker build -t client .
 docker run -p <le_port_de_ta_configuration>:<le_port_de_ta_configuration> client
 ```
 
-### 4.3 Docker Compose pour orchester
+### 4.3 Docker Compose pour orchestrer
 
-Pour débuter cette partie, regardes si ton application FullStack fonctionne corrrectement en lançant les 2 containers séparement.
-Il y a peut être des problèmes dans d'url de requêtes à corriger, des erreurs CORS...
+Pour débuter cette partie, regarde si ton application FullStack fonctionne corrrectement en lançant les 2 containers séparement.
+Il y a peut être des problèmes dans d'url de requête à corriger, des erreurs CORS...
 
 Une fois que tu as noté et/ou résolu les erreurs, tu vas pouvoir passer à l'**Orchestration**
 
-A la racine de ton projet, crées un fichier `docker-compose.yml`.
-A l'intérieur et copie-colles le code suivant :
+A la racine de ton projet, créer un fichier `docker-compose.yml`.
+A l'intérieur, copie-colle le code suivant :
 
 ```yml
 services:  // C'est la propriété de début
@@ -149,8 +149,8 @@ services:  // C'est la propriété de début
     command: npm run prod // Commande d'éxécution
     restart: always
     environment: // Déclaration des variables d'env si non sensible
-      - CLIENT_URL=http://localhost:4173
-      - PORT=3000
+      - CLIENT_URL=http://localhost:4280
+      - PORT=8000
 
   client: // tag de ton image
     build: ./client // Source pour le Dockerfile
@@ -164,9 +164,9 @@ services:  // C'est la propriété de début
 ```
 
 {: .alert-warning }
-Les valeurs de port et de variables d'environnement sont à ajuster à ton projet. Ne laisse pas celles ci par défaut.
+Les valeurs de port et de variables d'environnement sont à ajuster à ton projet. Ne laisse pas celles-ci par défaut.
 
-Une fois cela fait, enregistres et testes en lançant la commandes
+Une fois cela fait, enregistre et teste en lançant la commande.
 
 ```bash
 docker compose up --build
@@ -179,17 +179,24 @@ Si tout se passe bien, pense à commiter ton code et à le mettre à jour en lig
 
 ## 5. Configuration du serveur de déploiement
 
+La configuration du code projet est maintenant faite. On va passer à la à la configation de ton VPS.
+Commence par te connecter en VPS avec tes accès
+
+```bash
+ssh <user>@<host> -p <port>
+```
+
 ### 5.1 Boost du serveur avec ajout de mémoire swap
 
 Sur ton VPS, les ressources sont limitées. Tu peux avoir un aperçu de celle-ci lors de ta connexion.
 
 {: .alert-info }
-On voit dans l'illustration ci dessous, que j'utilise 40% de ma RAM mais peut de mes ressources en stockage (Hard Disk).
-Dans ce cas, je peux basculer une partie de mon espace de stockage en mémoire vive. C'est un systeme de swap (mémoire tampon au format fichier). On peut voir cela comme une extension de la mémoire.
+On voit dans l'illustration ci dessous, que j'utilise 40% de ma RAM mais peu de mes ressources en stockage (Hard Disk).
+Dans ce cas, je peux basculer une partie de mon espace de stockage en mémoire vive. C'est un systeme de SWAP (mémoire tampon au format fichier). On peut voir cela comme une extension de la mémoire.
 
 ![](./vps_ressources_example.png)
 
-Comment procéder ? Exécutes les commandes ci-dessous les unes après les autres
+Comment procéder ? Exécute les commandes ci-dessous les unes après les autres
 
 ```bash
 free -h # Affiche l'état de la mémoire du système (-h pour human-readable)
@@ -204,17 +211,17 @@ free -h # Affiche l'état de la mémoire du système (-h pour human-readable)
 Super, ton VPS est maintenant booster en **Mémoire**. Cela sera particulièrement utile pour les `build` **Docker** qui en nécessite beaucoup.
 
 {: .alert-warning }
-Attention, cette méthode n'est pas magique non plus. Il est recommandé de respecter une certaine proportion entre la mémoire physique (RAM) et notre swap
+Attention, cette méthode n'est pas magique non plus. Il est recommandé de respecter une certaine proportion entre la mémoire physique (RAM) et notre swap.
 
 ### 5.2 Mise à jour du projet ou clone
 
 Maintenant,
 
-- Vérifies que ton app tourne toujours sur ton navigateur (En cas de problème, la priorité est de relancer ton app avant de passer à la suite)
-- Déplaces toi dans le dossier de ton projet Github (`cd app/repo/...`)
-- Mets le à jour suivant la branche précédente (`git fetch --all && git switch <nom-de-la-branche>`)
-- Renseignes tes variables d'environnement si besoin ???
-- Executes ton code avec `pm2`.
+- Vérifie que ton app tourne toujours sur ton navigateur (En cas de problème, la priorité est de relancer ton app avant de passer à la suite)
+- Déplace toi dans le dossier de ton projet Github (`cd app/repo/...`)
+- Met le à jour suivant la branche précédente (`git fetch --all && git switch <nom-de-la-branche>`)
+- Renseigne tes variables d'environnement si besoin ???
+- Execute ton code avec `pm2`.
 
 A ce stade si tout est ok, tu devrais toujours accéder à ton app dans ton navigateur
 
@@ -237,7 +244,7 @@ docker compose up --build
 ```
 
 Les containers devraient s'exécuter et si le `mapping` de tous tes `ports` est bon, ton application devrait de nouveau être accessible en ligne.
-Si ce n'est pas le cas, vérifies :
+Si ce n'est pas le cas, vérifie :
 
 {: .alert-warning }
 
@@ -246,7 +253,7 @@ Si ce n'est pas le cas, vérifies :
 - ton fichier `index.ts` de ton api
 - ton fichier `client.ts` de ton client
 
-N'hésites pas à `push/pull` pour mettre à jour le code serveur. Penses à couper les containeurs et les `rebuilder` à chaque fois
+N'hésite pas à `push/pull` pour mettre à jour le code serveur. Pense à couper les containeurs et les `rebuilder` à chaque fois
 
 ### 5.5 Ecriture du script bash
 
@@ -295,18 +302,18 @@ Pour demander à Github d'éxécuter notre script, tu vas lui demander, étape p
 Mais pour se connecter au **VPS**, je vais devoir renseigner mes informations de connexion. Ce n'est pas un peu dangereux cela ?
 
 Pour palier à ce risque, **GitHub** à mis en place un système de clé secrète.
-Rends toi tout de suite sur **Github**, sur la page d'accueil de ton `Repo`.
+Rend toi tout de suite sur **Github**, sur la page d'accueil de ton `Repo`.
 
 Normalement, tu es passé en mode **Administrateur** et tu as donc accès à un onglet **Settings**
 
 ![](./Github_repo_tabs.png)
 
 {: .alert-warning }
-Si ce n'est pas le cas, demandes à ton formateur préféré (ou pas) de mettre à jour les droits d'utilisateur de ton repo
+Si ce n'est pas le cas, demande à ton formateur préféré (ou pas) de mettre à jour les droits d'utilisateur de ton repo
 
 #### A- Settings
 
-Dans l'onglet **Settings**, dans le menu à Gauche, cliques sur **Secrets and variables** puis **actions** du sous menu **Security**.
+Dans l'onglet **Settings**, dans le menu à Gauche, clique sur **Secrets and variables** puis **actions** du sous menu **Security**.
 
 ![](./Secrets_variables.png)
 
@@ -319,13 +326,13 @@ Tu vas devoir créer 4 variables, à chaque fois de la même façon.
 - SSH_HOST
 - SSH_PASSWORD
 
-Pour créer une nouvelle variable, dans l'onglet central 'Secrets', cliques sur le gros bouton vert **New repository secret**. Ensuite :
+Pour créer une nouvelle variable, dans l'onglet central 'Secrets', clique sur le gros bouton vert **New repository secret**. Ensuite :
 
 - remplis le champs `Name` par le nom de la variable
 - remplis le champs `secrets` par la valeur de la variable
 
 {: .alert-warning }
-Par mesure de sécurité, les valeurs entrées ne sont plus consultables ensuite. Vérifies bien tes saisies (Pas d'espace mort, minuscules, majuscules, ....)
+Par mesure de sécurité, les valeurs entrées ne sont plus consultables ensuite. Vérifie bien tes saisies (Pas d'espace mort, minuscules, majuscules, ....)
 
 A la fin, tu devrais avoir :
 
@@ -333,11 +340,11 @@ A la fin, tu devrais avoir :
 
 ### 6.2 Mise en place du Workflow
 
-Retournons dans ton éditeur de code.
-A la racine de ton projet, crées un dossier `.github` avec à l'intérieur un autre dossier `workflows`. Attention, à respecter l'orthographe, elle est déterminante pour la plateforme **GitHub**.
+Retourne dans ton éditeur de code.
+A la racine de ton projet, créer un dossier `.github` avec à l'intérieur un autre dossier `workflows`. Attention, à respecter l'orthographe, elle est déterminante pour la plateforme **GitHub**.
 
-A l'intérieur du dossier `workflows`, crées un fichier `deploy.yml`.
-Ensuite, copie-colles le code ci dessous :
+A l'intérieur du dossier `workflows`, crée un fichier `deploy.yml`.
+Ensuite, copie-colle le code ci dessous :
 
 ```yaml
 name: Automatic Deploy on VPS with bash # Nom donné à notre action automatique, ce nom est arbitraire
@@ -366,23 +373,23 @@ jobs: # Liste des actions  à réaliser
 - \*Triggering Event (https://docs.github.com/en/actions/writing-workflows/choosing-when-your-workflow-runs/events-that-trigger-workflows)
 - \*\*MarketPlace d'action GitHub (https://github.com/marketplace?type=actions)
 
-Une fois cela fait, penses à commiter ton travail.
-Patientes un peu avant de `push`
+Une fois cela fait, pense à commiter ton travail.
+Patiente un peu avant de `push`
 
 ### 6.3 Vérification de l'action
 
-Commences par accéder à la page de ton repo, et ouvre l'onglet **Actions**
+Commence par accéder à la page de ton repo, et ouvre l'onglet **Actions**
 
 ![](./Github_Actions-Tab.png)
 
-Maintenant, retournes dans ton terminal et `push` ton code sur Github.
-Retournes sur Github et rafraichit l'onglet.
+Maintenant, retourne dans ton terminal et `push` ton code sur Github.
+Retourne sur Github et rafraichit l'onglet.
 Normalement, ton interface à changer et tu dois voir une ligne portant le nom de ton action (cf workflow).
 Clique dessus, tu peux suivre l'éxécution de ton `script` et utiliser l'**Output** de l'interface Github pour debugger au besoin.
 
 ![](./Terminal_github_action.png)
 
 {: .alert-warning }
-En cas de problème, n'hésites pas à demander de l'aide
+En cas de problème, n'hésite pas à demander de l'aide
 
 Sinon, félicitation, tu viens de réaliser ton premier process de **Déploiement Continu** avec **Docker** et **Github Action**.
