@@ -189,7 +189,7 @@ Dans ce cas, je peux basculer une partie de mon espace de stockage en mémoire v
 
 ![](./vps_ressources_example.png)
 
-Comment procéder ? Exécute les commandes ci dessous les unes après les autres
+Comment procéder ? Exécutes les commandes ci-dessous les unes après les autres
 
 ```bash
 free -h # Affiche l'état de la mémoire du système (-h pour human-readable)
@@ -201,7 +201,7 @@ sudo swapon --show # Affiche les espaces de swap actifs.
 free -h # Affiche l'état de la mémoire du système (-h pour human-readable)
 ```
 
-Super, ton VPS est maintenant booster en Mémoire. Cela sera particulièrement utile pour les `build` **Docker** qui en nécessite beaucoup.
+Super, ton VPS est maintenant booster en **Mémoire**. Cela sera particulièrement utile pour les `build` **Docker** qui en nécessite beaucoup.
 
 {: .alert-warning }
 Attention, cette méthode n'est pas magique non plus. Il est recommandé de respecter une certaine proportion entre la mémoire physique (RAM) et notre swap
@@ -210,11 +210,11 @@ Attention, cette méthode n'est pas magique non plus. Il est recommandé de resp
 
 Maintenant,
 
-- Vérifie que ton app tourne toujours sur ton navigateur (En cas de problème, la priorité est de relancer ton app avant de passer à la suite)
-- Déplace toi dans le dossier de ton projet Github (`cd app/repo/...`)
-- Met le à jour suivant la branche précédente (`git fetch --all && git switch <nom-de-la-branche>`)
-- Renseigne tes variables d'environnement si besoin ???
-- Execute ton code avec `pm2`.
+- Vérifies que ton app tourne toujours sur ton navigateur (En cas de problème, la priorité est de relancer ton app avant de passer à la suite)
+- Déplaces toi dans le dossier de ton projet Github (`cd app/repo/...`)
+- Mets le à jour suivant la branche précédente (`git fetch --all && git switch <nom-de-la-branche>`)
+- Renseignes tes variables d'environnement si besoin ???
+- Executes ton code avec `pm2`.
 
 A ce stade si tout est ok, tu devrais toujours accéder à ton app dans ton navigateur
 
@@ -227,8 +227,8 @@ Pour installer **Docker** sur ton VPS, le mieux et le plus simple est de suivre 
 
 Si tout est bien configuré, tu as du accéder au container Hello World de `Docker`
 
-Cool, pour éviter d'avoir a passer en mode `sudo` à chaque fois, tu peuxs configurer ton serveur
-La documentation officielle de `Docker` nous explique comment faire 👀👀👀[doc](https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user)
+Cool, pour éviter d'avoir à passer en mode `sudo` à chaque fois, tu peux configurer ton serveur
+La documentation officielle de `Docker` t'explique comment faire 👀👀👀[doc](https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user)
 
 Une fois cela fait, tu peux te déplacer dans ton dossier de projet et lancer :
 
@@ -236,8 +236,8 @@ Une fois cela fait, tu peux te déplacer dans ton dossier de projet et lancer :
 docker compose up --build
 ```
 
-Les containers devraient s'éxécuter et si le `mapping` de tous tes `ports` est bon, ton application devrait de nouveau être accessible en ligne.
-Si ce n'est pas le cas, vérifie :
+Les containers devraient s'exécuter et si le `mapping` de tous tes `ports` est bon, ton application devrait de nouveau être accessible en ligne.
+Si ce n'est pas le cas, vérifies :
 
 {: .alert-warning }
 
@@ -279,7 +279,110 @@ bash deploy.sh
 
 Normalement, tu ne devrais pas avoir d'erreur dans ton terminal et ton application devrait toujours être disponible dans ton navigateur.
 
-## 6 Github actions
+## 6. Github actions
 
 Dernière et Ultime étape de notre projet de **Continious Deploiement**
 Exécuter notre script de manière automatique lors d'un évenement GitHub (merge sur une branche, push sur une branche, ...)
+
+### 6.1 Paramétrage de Github
+
+Pour demander à Github d'éxécuter notre script, tu vas lui demander, étape par étape :
+
+- Se connecter en **SSH** à ton serveur
+- Lancer la commande d'éxécution de ton fichier
+
+{: .alert-info }
+Mais pour se connecter au **VPS**, je vais devoir renseigner mes informations de connexion. Ce n'est pas un peu dangereux cela ?
+
+Pour palier à ce risque, **GitHub** à mis en place un système de clé secrète.
+Rends toi tout de suite sur **Github**, sur la page d'accueil de ton `Repo`.
+
+Normalement, tu es passé en mode **Administrateur** et tu as donc accès à un onglet **Settings**
+
+![](./Github_repo_tabs.png)
+
+{: .alert-warning }
+Si ce n'est pas le cas, demande à ton formateur préféré ou pas de mettre à jour les droits d'utilisateur de ton repo
+
+#### A- Settings
+
+Dans l'onglet **Settings**, dans le menu à Gauche, clique sur **Secrets and variables** puis **actions** du sous menu **Security**.
+
+![](./Secrets_variables.png)
+
+#### B- Secrets and Variables
+
+Tu vas devoir créer 4 variables, à chaque fois de la même façon.
+
+- SSH_USER
+- SSH_PORT
+- SSH_HOST
+- SSH_PASSWORD
+
+Pour créer une nouvelle variable, dans l'onglet central 'Secrets', cliques sur le gros bouton vert **New repository secret**. Ensuite :
+
+- remplis le champs `Name` par le nom de la variable
+- remplis le champs `secrets` par la valeur de la variable
+
+{: .alert-warning }
+Par mesure de sécurité, les valeurs entrées ne sont plus consultable ensuite. Vérifie bien tes saisies (Pas d'espace mort, minuscules, majuscules, ....)
+
+A la fin, tu devrais avoir :
+
+![](./declared_secrets.png)
+
+### 6.2 Mise en place du Workflow
+
+Retournons dans ton éditeur de code.
+A la racine de ton projet, crées un dossier `.github` avec à l'intérieur un autre dossier `workflows`. Attention, a respecter l'orthographe, elle est determinante pour la plateforme **GitHub**.
+
+A l'intérieur du dossier `workflows`, crée un fichier `deploy.yml`.
+Ensuite, copie-colles le code ci dessous :
+
+```yaml
+name: Automatic Deploy on VPS with bash # Nom donné à notre action automatique, ce nom est arbitraire
+
+on: # Listener d'evenements github *
+  push:
+    branches:
+      - test@deploy_with_docker #Nom par defaut, a adapter à votre branche (Dans ce cas, chaque push sur la branche déclenchera l'acion. Ce critère peut bien évidement être adapter (Merge, ...))
+
+jobs: # Liste des actions  à réaliser
+  deploy: # Nom arbitraire de l'action spécifique
+    runs-on: ubuntu-latest # OS pôur exécuter l'action
+    steps: # Liste des étapes de la procédures
+      - name: Deploy to VPS # Nom arbitraire de l'étape (Attention, ce nom sera un indicateur dans le terminal GitHub, soyons précis)
+        uses: appleboy/ssh-action@master # Utilisation d'un service Tiers, ici un serive de connexion ssh **
+        with:
+          username: ${{ secrets.SSH_USER }} # Info nécessaire à la connexion SSH
+          host: ${{ secrets.SSH_HOST }} # Info nécessaire à la connexion SSH
+          password: ${{ secrets.SSH_PASSWORD }} # Info nécessaire à la connexion SSH
+          port: ${{ secrets.SSH_PORT }} # Info nécessaire à la connexion SSH
+          script: cd ./apps && bash ./deploy.sh # Commande éxécuter par le service une fois la connexion faite (A adapter à votre context)
+```
+
+{: .alert-info }
+
+- Triggering Event (https://docs.github.com/en/actions/writing-workflows/choosing-when-your-workflow-runs/events-that-trigger-workflows)
+  \*\* MarketPlace d'action GitHub (https://github.com/marketplace?type=actions)
+
+Une fois cela fait, pense à commiter ton travail.
+Patiente un peu avant de `push`
+
+### 6.3 Vérification de l'action
+
+Commences par accéder à la page de ton repo, et ouvre l'onglet **Actions**
+
+![](./Github_Actions-Tab.png)
+
+Maintenant, retourne dans ton terminal et `push` ton code sur Github.
+Retourne sur Github et rafraichit l'onglet.
+Normalement, ton interface à changer et tu dois voir une ligne portant le nom de ton action (cf workflow).
+Clique dessus, tu peux suivre l'éxécution de ton `script` et utiliser l'**Output** de l'interface Github pour debugger au besoin.
+
+![](./Terminal_github_action.png)
+
+{: .alert-warning }
+En cas de problème, n'hésites pas à demander de l'aide
+
+Sinon, félicitation, tu viens de réaliser ton premier process de **Déploiement Continu** avec **Docker** et **Github Action**.
