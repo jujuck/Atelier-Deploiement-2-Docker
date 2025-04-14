@@ -52,7 +52,7 @@ Dans ton éditeur de code préféré, tu vas ajouter un fichier `Dockerfile` à 
 #### A- Configuration Projet
 
 - Dans ton `package.json`, ajoute 2 commandes de script, `"build": "npx tsc"` et `"prod": "node ./build/index.js"`
-- Dans ton `tsconfig.json`, active les clés `"rootDir": "/src"` et `"outDir": "/build"`
+- Dans ton `tsconfig.json`, active les clés `"rootDir": "./src"` et `"outDir": "./build"`
 - Teste ta configuration, dans ton terminal
 
 ```bash
