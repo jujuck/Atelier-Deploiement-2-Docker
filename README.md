@@ -118,7 +118,7 @@ Dans la même logique que le `Dockerfile` de ton **Serveur**, tu vas ajouter :
 - `RUN npm install` : installe les `node_modules` dans ton container
 - `COPY . .` : copie tous dans le dossier du container
 - `RUN npm run build` : compile le code de `typescript` vers `javascript`
-- `EXPOSE ${le port spécifique à ta configuration}`: expose le port de ton api
+- `EXPOSE ${le port spécifique à ta configuration}`: expose le port de ton client
 - `CMD ["npm", "run", "preview"]`: exécute le code de l'api 'run time'
 
 Attention, ton `Dockerfile` demande une copie intégrale de ton dossier, ceci est possible en production car les **node_modules** ne sont pas intégrés à ton **Repository GitHub**. Sinon, tu aurais dû ajouter un fichier `.dockerignore`.
